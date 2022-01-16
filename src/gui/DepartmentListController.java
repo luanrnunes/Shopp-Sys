@@ -95,6 +95,7 @@ public class DepartmentListController implements Initializable {
 			/*Atualiza as informacoes no formulario... SET injeta e UPDATE atualiza a tela*/
 			DepartmentFormController controller = loader.getController();
 			controller.setDepartment(obj);
+			controller.setDepartmentService(new DepartmentService());
 			controller.updateFormData();
 			
 			/*Instanciar um novo stage na frente de outro stage*/
