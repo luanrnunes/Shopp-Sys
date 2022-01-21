@@ -1,9 +1,11 @@
 package gui;
 
 import java.net.URL;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -142,6 +144,7 @@ public class SellerFormController implements Initializable {
 
 	/* Metodo que vai pegar as informacoes do campo e inserir na base */
 	/* e retornar um novo objeto to tipo Seller */
+	
 	private Seller getFormData() {
 		Seller obj = new Seller();
 
@@ -149,11 +152,40 @@ public class SellerFormController implements Initializable {
 
 		obj.setId(Utils.tryParseToInt(txtId.getText()));
 
+		/*Todas as condicoes de exception abaixo vao para o MAP de exceptions*/
+		/*para posteriormente serem tratados pelo nome, mais pra baixo...*/
 		if (txtName.getText() == null || txtName.getText().trim().equals("")) {
 			exception.addError("name", "Field can't be empty");
 		}
 		obj.setName(txtName.getText());
+		
 
+		if (txtEmail.getText() == null || txtEmail.getText().trim().equals("")) {
+			exception.addError("email", "Field can't be empty");
+		}
+		obj.setEmail(txtName.getText());
+		
+		/*Se o datepicker estiver nulo, gerara um erro sem stopar o app*/
+		/*Se nao tiver nulo, tentar realizar a conversao*/
+		if (dpBirthDate.getValue() == null) {
+			exception.addError("birthDate", "Field can't be empty");
+		}
+		
+		else {
+		
+		/*Para capturar informacoes de um DATEPICKER, e preciso utilizar uma variavel do tipo Instant*/
+		Instant instant = Instant.from(dpBirthDate.getValue().atStartOfDay(ZoneId.systemDefault()));
+		obj.setBirthDate(Date.from(instant)); /*Converte a informacao do DATEPICKER para formato normal de data*/
+		
+		}
+		if (txtBaseSalary.getText() == null || txtBaseSalary.getText().trim().equals("")) {
+			exception.addError("baseSalary", "Field can't be empty");
+		}
+		
+		obj.setBaseSalary(Utils.tryParseToDouble(txtBaseSalary.getText()));
+		
+		obj.setDepartment(comboBoxDepartment.getValue());/*Pega o valor definido no combobox do progama para lancar ao banco*/
+		
 		/* Se houver alguma exception no map, sera lancado aqui */
 		if (exception.getErrors().size() > 0) {
 			throw exception;
@@ -230,7 +262,31 @@ public class SellerFormController implements Initializable {
 		if (fields.contains("name")) {
 			labelErrorName.setText(errors.get("name"));
 		}
+		else {
+			labelErrorName.setText("");
+		}
+		
+		if (fields.contains("email")) {
+			labelErrorEmail.setText(errors.get("email"));
+		}
+		else {
+			labelErrorEmail.setText("");
+		}
+		
+		if (fields.contains("baseSalary")) {
+			labelErrorBaseSalary.setText(errors.get("baseSalary"));
+		}
+		else {
+			labelErrorBaseSalary.setText("");
+		}
 
+		if (fields.contains("birthDate")) {
+			labelErrorBirthDate.setText(errors.get("birthDate"));
+		}
+		else {
+			labelErrorBirthDate.setText("");
+		}
+		
 	}
 
 	private void initializeComboBoxDepartment() {
